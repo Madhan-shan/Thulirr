@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>3D Print Cost Calculator</title>
+
+<link rel="icon" href="favicon.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --primary:#16a34a;
+    --primary-light:#22c55e;
+    --dark:#0f172a;
+    --text:#475569;
+    --border:#e2e8f0;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#dcfce7,#ecfeff);
+    min-height:100vh;
+    padding:24px;
+}
+
+.container{
+    max-width:1300px;
+    margin:auto;
+}
+
+.header{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    margin-bottom:25px;
+
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(20px);
+
+    border-radius:24px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.08);
+}
+
+.brand-logo{
+    height:95px;
+    width:auto;
+    object-fit:contain;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.card{
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(20px);
+
+    border-radius:24px;
+    padding:30px;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,0.08);
+}
+
+.card h2{
+    color:var(--dark);
+    margin-bottom:22px;
+}
+
+.input-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:8px;
+    color:var(--text);
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    font-size:15px;
+}
+
+input:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 4px rgba(22,163,74,.15);
+}
+
+.price-card{
+
+    background:
+    linear-gradient(
+    135deg,
+    #16a34a,
+    #22c55e);
+
+    color:white;
+
+    border-radius:24px;
+    padding:30px;
+
+    margin-bottom:20px;
+
+    box-shadow:
+    0 15px 35px rgba(34,197,94,0.30);
+}
+
+.price-label{
+    font-size:15px;
+    opacity:0.9;
+}
+
+.price{
+    font-size:56px;
+    font-weight:700;
+    margin-top:10px;
+}
+
+.price-note{
+    margin-top:10px;
+    opacity:.85;
+    font-size:14px;
+}
+
+.breakdown-row{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px 0;
+
+    border-bottom:
+    1px solid #e2e8f0;
+}
+
+.breakdown-row:last-child{
+    border-bottom:none;
+}
+
+.breakdown-row strong{
+    color:var(--dark);
+}
+
+.status{
+
+    margin-top:20px;
+
+    text-align:center;
+
+    padding:14px;
+
+    border-radius:14px;
+
+    font-weight:600;
+}
+
+.excellent{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.good{
+    background:#fef3c7;
+    color:#b45309;
+}
+
+.low{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.footer{
+    text-align:center;
+    margin-top:25px;
+    color:#64748b;
+    font-size:13px;
+}
+
+@media (max-width:900px){
+
+.grid{
+    grid-template-columns:1fr;
+}
+
+.price{
+    font-size:42px;
+}
+
+.brand-logo{
+    height:75px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <img
+        src="thulirr.png"
+        alt="Thulirr Logo"
+        class="brand-logo">
+
+    </div>
+
+    <div class="grid">
+
+        <!-- LEFT -->
+        <div class="card">
+
+            <h2>⚙️ Product Inputs</h2>
+
+            <div class="input-group">
+                <label>Filament Cost Per KG (₹)</label>
+                <input type="number" id="filamentCost" value="800">
+            </div>
+
+            <div class="input-group">
+                <label>Model Weight (g)</label>
+                <input type="number" id="modelWeight" value="120">
+            </div>
+
+            <div class="input-group">
+                <label>Purge / Waste Weight (g)</label>
+                <input type="number" id="wasteWeight" value="15">
+            </div>
+
+            <div class="input-group">
+                <label>Packaging Cost (₹)</label>
+                <input type="number" id="packaging" value="15">
+            </div>
+
+            <div class="input-group">
+                <label>Electricity Cost (₹)</label>
+                <input type="number" id="electricity" value="5">
+            </div>
+
+            <div class="input-group">
+                <label>Profit Margin (%)</label>
+                <input type="number" id="profit" value="100">
+            </div>
+
+            <div class="input-group">
+                <label>GST (%)</label>
+                <input type="number" id="gst" value="18">
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+
+            <div class="price-card">
+
+                <div class="price-label">
+                    Recommended Selling Price (Incl. GST)
+                </div>
+
+                <div class="price" id="finalPrice">
+                    ₹0
+                </div>
+
+                <div class="price-note">
+                    Material + Waste + Packaging + Electricity + Profit + GST
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>💰 Cost Breakdown</h2>
+
+                <div class="breakdown-row">
+                    <span>Total Filament Used</span>
+                    <strong id="totalFilament">0 g</strong>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Material Cost</span>
+                    <strong id="materialCost">₹0</strong>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Packaging</span>
+                    <strong id="packagingCost">₹0</strong>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Electricity</span>
+                    <strong id="electricityCost">₹0</strong>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Total Cost</span>
+                    <strong id="totalCost">₹0</strong>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Profit Amount</span>
+                    <strong id="profitAmount">₹0</strong>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Price Before GST</span>
+                    <strong id="beforeGST">₹0</strong>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>GST Amount</span>
+                    <strong id="gstAmount">₹0</strong>
+                </div>
+
+                <div id="marginStatus"
+                class="status excellent">
+                Excellent Margin ✅
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Professional 3D Printing Cost & Pricing Calculator
+    </div>
+
+</div>
+
+<script>
+
+const inputs =
+document.querySelectorAll("input");
+
+inputs.forEach(input=>{
+    input.addEventListener("input",calculate);
+});
+
+function calculate(){
+
+    const filamentCost =
+    parseFloat(document.getElementById("filamentCost").value) || 0;
+
+    const modelWeight =
+    parseFloat(document.getElementById("modelWeight").value) || 0;
+
+    const wasteWeight =
+    parseFloat(document.getElementById("wasteWeight").value) || 0;
+
+    const packaging =
+    parseFloat(document.getElementById("packaging").value) || 0;
+
+    const electricity =
+    parseFloat(document.getElementById("electricity").value) || 0;
+
+    const profitPercent =
+    parseFloat(document.getElementById("profit").value) || 0;
+
+    const gst =
+    parseFloat(document.getElementById("gst").value) || 0;
+
+    const costPerGram =
+    filamentCost / 1000;
+
+    const totalFilament =
+    modelWeight + wasteWeight;
+
+    const materialCost =
+    totalFilament * costPerGram;
+
+    const totalCost =
+    materialCost +
+    packaging +
+    electricity;
+
+    const profitAmount =
+    totalCost * (profitPercent / 100);
+
+    const beforeGST =
+    totalCost + profitAmount;
+
+    const gstAmount =
+    beforeGST * (gst / 100);
+
+    const finalPrice =
+    beforeGST + gstAmount;
+
+    document.getElementById("totalFilament").innerText =
+    totalFilament.toFixed(0) + " g";
+
+    document.getElementById("materialCost").innerText =
+    "₹" + materialCost.toFixed(2);
+
+    document.getElementById("packagingCost").innerText =
+    "₹" + packaging.toFixed(2);
+
+    document.getElementById("electricityCost").innerText =
+    "₹" + electricity.toFixed(2);
+
+    document.getElementById("totalCost").innerText =
+    "₹" + totalCost.toFixed(2);
+
+    document.getElementById("profitAmount").innerText =
+    "₹" + profitAmount.toFixed(2);
+
+    document.getElementById("beforeGST").innerText =
+    "₹" + beforeGST.toFixed(2);
+
+    document.getElementById("gstAmount").innerText =
+    "₹" + gstAmount.toFixed(2);
+
+    document.getElementById("finalPrice").innerText =
+    "₹" + Math.round(finalPrice);
+
+    const status =
+    document.getElementById("marginStatus");
+
+    if(profitPercent >= 75){
+
+        status.className =
+        "status excellent";
+
+        status.innerHTML =
+        "Excellent Margin ✅";
+
+    }
+    else if(profitPercent >= 40){
+
+        status.className =
+        "status good";
+
+        status.innerHTML =
+        "Healthy Margin 👍";
+
+    }
+    else{
+
+        status.className =
+        "status low";
+
+        status.innerHTML =
+        "Low Margin ⚠️";
+
+    }
+
+}
+
+calculate();
+
+</script>
+
+</body>
+</html>
